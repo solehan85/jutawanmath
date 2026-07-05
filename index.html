@@ -7,7 +7,7 @@
 <title>Millionaire Math | FUN MATHS</title>
 <style>
 :root{--ruby:#d20a32;--crimson:#a40024;--burgundy:#520013;--ink:#180007;--card:#710019;--white:#fff9f6;--gold:#ffd166;--green:#16a36a;--red:#ef3340;--muted:#f2b8c3}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--ink);color:var(--white);font-family:Inter,ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif;overflow-x:hidden}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--ink);color:var(--white);font-family:"Trebuchet MS","Arial Rounded MT Bold",Nunito,system-ui,sans-serif;overflow-x:hidden}
 body{min-height:100vh;min-height:100dvh;background:radial-gradient(circle at 50% -20%,#c20a32 0,#520013 42%,#180007 75%);touch-action:manipulation}
 button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}
 .app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
@@ -34,7 +34,22 @@ h1,h2,p{margin-top:0}.login-card h1{font-size:clamp(1.7rem,7vw,2.6rem);margin-bo
 .loading{position:fixed;inset:0;background:#32000d;z-index:200;display:grid;place-items:center;text-align:center}.spinner{width:48px;height:48px;border:5px solid #ffffff25;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:16px auto}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:150;overflow:hidden}.confetti i{position:absolute;top:-20px;width:9px;height:15px;background:var(--gold);animation:fall 3s linear forwards}
 button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:2px}
-@media(min-width:700px){main{padding:20px}.answers{grid-template-columns:1fr 1fr}.question-card{padding:20px}.tools{max-width:600px}.game-layout{grid-template-columns:minmax(0,1fr) 245px}.ladder{display:block}.mobile-ladder{display:none!important}.hud-item strong{font-size:1rem}}
+
+.mobile-prize-track{display:block;margin:0 0 10px;background:#3b000f;border:2px solid #ffcf5a55;border-radius:18px;padding:9px 8px;box-shadow:0 8px 24px #0005}
+.mobile-prize-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;font-weight:1000;font-size:.78rem;color:#ffe59a}
+.mobile-prize-scroll{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px 2px 7px;scroll-snap-type:x mandatory}
+.mobile-prize-scroll::-webkit-scrollbar{display:none}
+.mobile-prize-step{flex:0 0 auto;min-width:70px;padding:7px 8px;border-radius:12px;background:#650019;border:1px solid #ffffff24;text-align:center;scroll-snap-align:center;font-weight:900;font-size:.69rem;color:#ffd9e1}
+.mobile-prize-step span{display:block;font-size:.61rem;opacity:.75;margin-bottom:2px}
+.mobile-prize-step.passed{background:#0b6c49;color:#fff;border-color:#58eeb1}
+.mobile-prize-step.current{background:#ffd166;color:#4a1800;border-color:#fff1a8;transform:scale(1.08);box-shadow:0 0 8px #fff,0 0 18px #ffd166,0 0 34px #ff9d00;animation:scoreGlow 1.25s ease-in-out infinite alternate}
+.mobile-prize-step.checkpoint:not(.current){border-color:#ffd166;color:#ffe59a}
+.question{letter-spacing:.005em}
+.answer{font-size:clamp(.96rem,4vw,1.08rem);border-width:2px}
+.letter{font-size:1rem}
+.login-card h1,.brand,.qbadge,.tool,.primary{font-family:"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif}
+@keyframes scoreGlow{from{box-shadow:0 0 7px #fff,0 0 14px #ffd166,0 0 24px #ff9d00}to{box-shadow:0 0 12px #fff,0 0 26px #ffe27d,0 0 42px #ff6a00}}
+@media(min-width:700px){.mobile-prize-track{display:none}main{padding:20px}.answers{grid-template-columns:1fr 1fr}.question-card{padding:20px}.tools{max-width:600px}.game-layout{grid-template-columns:minmax(0,1fr) 245px}.ladder{display:block}.mobile-ladder{display:none!important}.hud-item strong{font-size:1rem}}
 @keyframes enter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{transform:scale(1.08)}}@keyframes correctGlow{50%{box-shadow:0 0 30px #3effa477}}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition:none!important}}
 </style>
@@ -60,7 +75,11 @@ button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:2
 <div class="game-main">
  <div class="hud"><div class="hud-item"><small>PEMAIN</small><strong id="hudName">-</strong></div><div class="hud-item"><small>SOALAN</small><strong id="hudQuestion">1 / 15</strong></div><div class="hud-item"><small>NILAI</small><strong id="hudPrize">RM100</strong></div></div>
  <div class="progress"><div id="progressBar"></div></div>
- <div class="tools"><button id="fiftyBtn" class="tool">✂️ 50:50</button><button id="hintBtn" class="tool">💡 PETUNJUK</button><button id="swapBtn" class="tool">🔄 TUKAR</button><button id="ladderBtn" class="tool mobile-ladder">💰 HADIAH</button></div>
+ <div class="tools"><button id="fiftyBtn" class="tool">✂️ 50:50</button><button id="hintBtn" class="tool">💡 PETUNJUK</button><button id="swapBtn" class="tool">🔄 TUKAR</button><button id="ladderBtn" class="tool mobile-ladder">💰 SEMUA HADIAH</button></div>
+ <section class="mobile-prize-track" aria-label="Kedudukan hadiah semasa">
+   <div class="mobile-prize-title"><span>🏆 PERJALANAN JUTAWAN</span><strong id="mobileCurrentPrize">RM100</strong></div>
+   <div id="mobilePrizeScroll" class="mobile-prize-scroll"></div>
+ </section>
  <article class="question-card">
    <div class="qtop"><span class="qbadge" id="questionBadge">SOALAN 1</span><div class="timer" id="timer">30</div></div>
    <div id="hintBox" class="hint hidden"></div><div class="question" id="questionText"></div><div class="answers" id="answers"></div>
@@ -72,7 +91,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:2
 </main>
 </div>
 <div id="status" class="status hidden"></div>
-<div id="loading" class="loading"><div><div class="brand">MILLIONAIRE MATH</div><div class="spinner"></div><p>Menyediakan pentas permainan…</p></div></div>
+<div id="loading" class="loading"><div><div class="brand">MILLIONAIRE MATH</div><div class="spinner"></div><p>Bersedia untuk cabaran matematik…</p></div></div>
 <div id="modal" class="overlay hidden" role="dialog" aria-modal="true"><div id="modalCard" class="modal-card"></div></div>
 <div id="confetti" class="confetti hidden"></div>
 
@@ -93,7 +112,7 @@ function initApp(){
  $("audioBtn").textContent=state.audioEnabled?"🔊":"🔇";
  const saved=localStorage.getItem("mmPlayerName"); if(saved)$("nameInput").value=saved;
  buildLadder(); bindEvents(); initFirebase();
- setTimeout(()=>{$("loading").classList.add("hidden"); if(!firebaseOnline)showStatus("Mod offline tersedia — skor akan disimpan pada peranti.")},2600);
+ setTimeout(()=>{$("loading").classList.add("hidden"); if(!firebaseOnline)showStatus("Internet belum tersedia. Jangan risau, game masih boleh dimainkan dan skor disimpan di peranti.")},2600);
 }
 function bindEvents(){
  $("startBtn").addEventListener("click",loginPlayer);$("nameInput").addEventListener("keydown",e=>{if(e.key==="Enter")loginPlayer()});
@@ -126,7 +145,18 @@ function generateUniqueQuestion(level){
  if(tries>=180){localStorage.removeItem("mmQuestionHistory");do{q=generateQuestion(level)}while(state.usedQuestionIds.has(q.id))}
  state.usedQuestionIds.add(q.id);const h=[...history,q.id].slice(-900);localStorage.setItem("mmQuestionHistory",JSON.stringify(h));return q;
 }
-function qobj(id,text,answer,wrong,hint){let opts=shuffle([answer,...wrong].filter((v,i,a)=>a.indexOf(v)===i));while(opts.length<4)opts.push(String(Number(answer)+opts.length+1));return{id,text,answer:String(answer),options:opts.slice(0,4).map(String),hint}}
+function qobj(id,text,answer,wrong,hint){
+ const correct=String(answer);
+ let opts=[answer,...wrong].map(String).filter((v,i,a)=>a.indexOf(v)===i);
+ let seed=1;
+ while(opts.length<4){
+   const numeric=Number(String(answer).replace(/[^0-9.-]/g,""));
+   const fallback=Number.isFinite(numeric)?String(numeric+seed):("Pilihan "+seed);
+   if(!opts.includes(fallback))opts.push(fallback);
+   seed++;
+ }
+ return{id,text,answer:correct,options:shuffle(opts).slice(0,4),hint};
+}
 function generateQuestion(level){
  const type=shuffle(level==="easy"?["add","sub","mul","div","place","money","time"]:level==="medium"?["fraction","decimal","money2","duration","length","perimeter","area","word"]:["mixed","percent","ratio","average","factor","multiple","prime","logic","multistep"])[0];
  let a,b,c,ans;
@@ -188,7 +218,24 @@ function updateHUD(){
  $("progressBar").style.width=`${(state.currentQuestionIndex/15)*100}%`;buildLadder()
 }
 function buildLadder(){
- const box=$("ladderList");box.textContent="";PRIZES.forEach((p,i)=>{const r=document.createElement("div");r.className="prize-row"+(i===state.currentQuestionIndex?" current":"")+(i<state.currentQuestionIndex?" passed":"")+([4,9,14].includes(i)?" checkpoint":"");const n=document.createElement("span");n.textContent=i+1;const v=document.createElement("strong");v.textContent=fmt(p);r.append(n,v);box.appendChild(r)})
+ const box=$("ladderList");box.textContent="";
+ PRIZES.forEach((p,i)=>{const r=document.createElement("div");r.className="prize-row"+(i===state.currentQuestionIndex?" current":"")+(i<state.currentQuestionIndex?" passed":"")+([4,9,14].includes(i)?" checkpoint":"");const n=document.createElement("span");n.textContent=i+1;const v=document.createElement("strong");v.textContent=fmt(p);r.append(n,v);box.appendChild(r)});
+ buildMobilePrizeTrack();
+}
+function buildMobilePrizeTrack(){
+ const box=$("mobilePrizeScroll"); if(!box)return;
+ box.textContent="";
+ PRIZES.forEach((p,i)=>{
+   const step=document.createElement("div");
+   step.className="mobile-prize-step"+(i===state.currentQuestionIndex?" current":"")+(i<state.currentQuestionIndex?" passed":"")+([4,9,14].includes(i)?" checkpoint":"");
+   step.dataset.index=i;
+   const no=document.createElement("span"); no.textContent="SOALAN "+(i+1);
+   const val=document.createElement("strong"); val.textContent=fmt(p);
+   step.append(no,val); box.appendChild(step);
+ });
+ const current=box.querySelector(".current");
+ if(current) requestAnimationFrame(()=>current.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"}));
+ const currentLabel=$("mobileCurrentPrize"); if(currentLabel) currentLabel.textContent=fmt(PRIZES[state.currentQuestionIndex]||1000000);
 }
 async function endGame(reason){
  if(state.gameStatus==="ended")return;state.gameStatus="ended";stopTimer();const finalPrize=state.guaranteedPrize;await saveScore(finalPrize);
